@@ -4,12 +4,23 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const passport = require('passport');
+const session = require('express-session'); // Added session
 const app = express();
 
 // 1. MIDDLEWARE
 app.use(express.json()); 
 app.use(express.static(path.join(__dirname, 'public')));
+
+// SESSION MUST come before Passport
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'bookshop_temp_secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: process.env.NODE_ENV === 'production' } 
+}));
+
 app.use(passport.initialize());
+app.use(passport.session()); // Required for persistent login sessions
 
 // 2. DATABASE CONNECTION
 const mongoURI = process.env.MONGO_URI;
@@ -41,6 +52,7 @@ const Product = mongoose.models.Product || mongoose.model('Product', productSche
 const Order = mongoose.models.Order || mongoose.model('Order', orderSchema);
 
 // 4. ROUTES
+// IMPORTANT: Ensure these folders/filenames are lowercase in your sidebar!
 const userRoutes = require('./routes/users');
 const authRoutes = require('./routes/auth');
 
@@ -96,7 +108,6 @@ app.post('/api/orders', async (req, res) => {
 });
 
 // 6. CATCH-ALL ROUTE (EXPRESS 5 COMPATIBLE)
-// We name the parameter "any" and use the asterisk
 app.get('/:any*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });

@@ -108,8 +108,7 @@ app.post('/api/orders', async (req, res) => {
 });
 
 // 6. CATCH-ALL ROUTE (EXPRESS 5 COMPATIBLE)
-// To exactly this:
-app.get('*', (req, res) => {
+app.get('/:path*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 

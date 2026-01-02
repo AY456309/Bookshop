@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+:root {
+  --midnight: #0a0a0a; /* Deep near-black to blend with dark logos */
+  --gold: #d4af37;
+  --gold-dark: #b8860b;
+  --text-gray: #a0a0a0;
+  --light-bg: #f8f9fa;
+}
+
+* {
+  margin: 0; padding: 0; box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background-color: #fff;
+  color: var(--midnight);
+}
+
+/* --- Header & Navigation --- */
+.user_header .header_1 {
+  background-color: var(--midnight);
+  padding: 12px 0;
+  position: sticky; 
+  top: 0; 
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.user_flex {
+  display: flex; justify-content: space-between; align-items: center;
+  max-width: 1300px; margin: 0 auto; padding: 0 20px;
+}
+
+.logo_cont {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo_cont img { 
+  height: 45px; /* Perfect height for a 450x450 source */
+  width: auto; 
+  margin-right: 12px;
+  object-fit: contain;
+}
+
+.book_logo {
+  color: #fff; 
+  text-decoration: none; 
+  font-weight: 600; 
+  font-size: 1.4rem;
+  letter-spacing: 0.5px;
+}
+
+.navbar_links a {
+  color: #bbb; text-decoration: none; margin: 0 12px; font-size: 0.85rem;
+  text-transform: uppercase; letter-spacing: 1.2px; transition: 0.3s;
+  font-weight: 500;
+}
+
+.navbar_links a:hover, .navbar_links a.active { 
+  color: var(--gold); 
+}
+
+/* --- Icons & Search --- */
+.last_part {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.icons a {
+  color: #fff;
+  font-size: 1.2rem;
+  transition: 0.3s;
+  text-decoration: none;
+}
+
+.icons a:hover { color: var(--gold); }
+
+.login_text {
+  font-size: 0.8rem;
+  margin-left: 5px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.search_form {
+  background: rgba(255,255,255,0.07);
+  padding: 6px 15px; 
+  border-radius: 50px; 
+  display: flex; 
+  align-items: center;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.search_form input {
+  background: transparent; border: none; color: white; outline: none; font-size: 0.8rem; width: 120px;
+}
+
+.search_form button { background: transparent; border: none; color: var(--gold); cursor: pointer; }
+
+/* --- Global Buttons --- */
+.product_btn {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%) !important;
+  color: var(--midnight) !important;
+  border: none !important;
+  padding: 12px 28px !important;
+  border-radius: 4px !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: 0.4s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.product_btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+  filter: brightness(1.1);
+}
+
+/* --- Footer --- */
+.footer_main { background-color: var(--midnight); color: white; border-top: 1px solid #222; }
+.footer_title { color: var(--gold); font-size: 1rem; text-transform: uppercase; margin-bottom: 25px; font-weight: 600; }
+.footer_text { color: #888; font-size: 0.9rem; line-height: 1.7; }
+.footer_links_list { list-style: none; padding: 0; }
+.footer_links_list li { margin-bottom: 12px; }
+.footer_links_list a, .footer_social_link {
+  color: #888; text-decoration: none; font-size: 0.9rem; transition: 0.3s;
+}
+.footer_links_list a:hover, .footer_social_link:hover { color: var(--gold); padding-left: 5px; }
+.footer_hr { border-color: #222; margin: 40px 0 20px; }
+.footer_copy { color: #555; font-size: 0.75rem; }

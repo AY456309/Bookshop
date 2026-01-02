@@ -1,0 +1,314 @@
+/* ==========================================================================
+   1. HERO SECTION (index.html)
+   ========================================================================== */
+.home_cont {
+  height: 70vh;
+  background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url("../images/bg.jpg") no-repeat center/cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+}
+
+.home_cont h1 {
+  font-size: 4rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+
+.home_cont p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  color: #ccc;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ==========================================================================
+   2. PRODUCT GRID & SHOP CARDS (shop.html & index.html)
+   ========================================================================== */
+.pro_box_cont {
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    gap: 20px;
+    padding: 40px 0;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: start; 
+}
+
+.pro_box {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  text-align: center;
+  position: relative;
+  transition: all 0.4s ease;
+}
+
+.pro_box:hover {
+  border-color: var(--gold);
+  transform: translateY(-10px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* Floating Gold Price Badge */
+.pro_box .badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: var(--midnight);
+  color: var(--gold);
+  padding: 5px 15px;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  z-index: 10;
+}
+
+.pro_box img {
+  height: 200px;
+  max-width: 100%;
+  object-fit: contain;
+  margin-bottom: 20px;
+  transition: 0.4s ease;
+}
+
+.pro_box:hover img {
+  transform: scale(1.05);
+}
+
+.pro_box h3 {
+  font-size: 1.1rem;
+  color: var(--midnight);
+  margin: 10px 0 15px;
+  font-weight: 600;
+  height: 2.4em; /* Keeps titles aligned */
+  overflow: hidden;
+}
+
+.pro_box input[type="number"] {
+  width: 70px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  text-align: center;
+  outline: none;
+}
+
+/* ==========================================================================
+   3. ABOUT SECTION (about.html & index.html)
+   ========================================================================== */
+.about_section {
+  background-color: #ffffff;
+}
+
+.about_section img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 20px;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+  display: block;
+  margin: 0 auto;
+}
+
+.about_descript h2 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: var(--midnight);
+  font-weight: 600;
+}
+
+.about_descript p {
+  line-height: 1.8;
+  color: #555;
+  font-size: 1.05rem;
+  margin-bottom: 25px;
+}
+
+/* ==========================================================================
+   4. QUESTIONS / NEED HELP SECTION
+   ========================================================================== */
+.questions_section { 
+  background-color: #f8f9fa !important; 
+  padding: 80px 0;
+}
+
+.questions_card {
+  background: #ffffff !important; 
+  border-radius: 20px; 
+  border-top: 5px solid var(--gold);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.05);
+  padding: 60px;
+  margin: 0 auto;
+  max-width: 900px;
+}
+
+.questions_card h2 {
+  color: var(--midnight);
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   5. CONTACT PAGE SPECIFIC (contact.html)
+   ========================================================================== */
+.contact_section {
+  background-color: #f8f9fa;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+}
+
+.contact_card {
+  background: white;
+  border-radius: 15px;
+  border-top: 5px solid var(--gold);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.custom_input {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fdfdfd;
+  font-size: 0.95rem;
+  transition: 0.3s ease;
+}
+
+.custom_input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.1);
+  outline: none;
+}
+
+/* ==========================================================================
+   6. ORDERS PAGE STYLING (orders.html)
+   ========================================================================== */
+.orders_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 25px;
+}
+
+.order_card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+  transition: 0.3s ease;
+}
+
+.order_card:hover {
+  border-color: var(--gold);
+  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.1);
+}
+
+.order_card p strong {
+  color: var(--midnight);
+  font-weight: 500;
+  width: 140px;
+  display: inline-block;
+}
+
+.bg-success-light {
+  background-color: #e8f5e9;
+  border: 1px solid #c8e6c9;
+}
+
+/* ==========================================================================
+   7. SHOPPING CART STYLING (cart.html)
+   ========================================================================== */
+.cart_card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  transition: 0.3s;
+}
+
+.cart_card:hover {
+  border-color: var(--gold);
+}
+
+.cart_img {
+  width: 70px;
+  height: 90px;
+  object-fit: contain;
+}
+
+.qty_input {
+  width: 70px !important;
+  text-align: center;
+}
+
+.delete_btn {
+  color: #ff5e5e;
+  font-size: 1.2rem;
+  transition: 0.3s;
+}
+
+.delete_btn:hover {
+  color: #d90000;
+  transform: scale(1.1);
+}
+
+.cart_summary_card {
+  background: #ffffff;
+  border-radius: 15px;
+  border: 1px solid #eee;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 100px;
+}
+
+/* Button override for outline in cart */
+.btn-outline-dark {
+  border: 2px solid var(--midnight);
+  color: var(--midnight);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}
+
+.btn-outline-dark:hover {
+  background-color: var(--midnight);
+  color: white;
+}
+
+/* ==========================================================================
+   8. GLOBAL UI HELPERS
+   ========================================================================== */
+.section_title {
+  text-align: center;
+  font-size: 2.5rem;
+  color: var(--midnight);
+  margin-bottom: 50px;
+  font-weight: 600;
+  position: relative;
+}
+
+.section_title::after {
+  content: '';
+  width: 70px;
+  height: 4px;
+  background: var(--gold);
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Add this at the very end of your file */
+@media (max-width: 600px) {
+    .pro_box_cont {
+        grid-template-columns: 1fr; /* 1 column on mobile */
+    }
+}

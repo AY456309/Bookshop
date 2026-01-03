@@ -61,4 +61,27 @@ function clearCart() {
     }
 }
 
+// Function to handle Checkout button logic
+function checkAuthAndProceed() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    // 1. Check if the cart is empty first
+    if (cart.length === 0) {
+        alert("Your cart is empty! Add some books before checking out.");
+        window.location.href = 'shop.html';
+        return;
+    }
+
+    // 2. Check if the user is logged in
+    if (isLoggedIn === 'true') {
+        // User is logged in, send them to checkout
+        window.location.href = 'checkout.html';
+    } else {
+        // User is NOT logged in
+        alert("Please login first to proceed with your order.");
+        window.location.href = 'login.html';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', displayCart);

@@ -2,94 +2,128 @@
    1. HERO SECTION
    ========================================================================== */
 .home_cont {
-  height: 70vh;
-  background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url("../images/bg.jpg") no-repeat center/cover;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  text-align: center;
+    height: 70vh;
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url("../images/bg.jpg") no-repeat center/cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    padding: 20px;
 }
 
 .home_cont h1 {
-  font-size: 4rem;
-  font-weight: 700;
-  margin-bottom: 10px;
-  text-transform: uppercase;
-  letter-spacing: 3px;
+    font-size: 4rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    animation: fadeInDown 0.8s ease-out;
 }
 
 .home_cont p {
-  font-size: 1.2rem;
-  margin-bottom: 30px;
-  color: #ccc;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    color: #ccc;
+    max-width: 600px;
+    margin: 0 auto 30px;
 }
 
 /* ==========================================================================
-   2. PRODUCT GRID
+   2. PRODUCT GRID (Optimized for Responsiveness)
    ========================================================================== */
 .pro_box_cont {
     display: grid;
-    grid-template-columns: 1fr 1fr; 
-    gap: 20px;
-    padding: 40px 0;
+    /* Uses auto-fit to handle columns automatically */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+    gap: 25px;
+    padding: 40px 20px;
     max-width: 1200px;
     margin: 0 auto;
 }
 
 .pro_box {
-  background: #ffffff;
-  padding: 25px;
-  border-radius: 12px;
-  border: 1px solid #eee;
-  text-align: center;
-  transition: all 0.4s ease;
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .pro_box:hover {
-  border-color: var(--gold);
-  transform: translateY(-10px);
+    border-color: var(--gold);
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
 }
 
 .pro_box img {
-  height: 200px;
-  max-width: 100%;
-  object-fit: contain;
+    height: 250px;
+    width: 100%;
+    object-fit: cover; /* Keeps all book covers uniform */
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.pro_box h3 {
+    font-size: 1.1rem;
+    color: var(--midnight);
+    margin-bottom: 10px;
+    height: 2.4em;
+    overflow: hidden;
+}
+
+.pro_box .badge {
+    background: var(--midnight);
+    color: var(--gold);
+    margin-bottom: 10px;
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: bold;
 }
 
 /* ==========================================================================
    3. ABOUT & QUESTIONS
    ========================================================================== */
+.about_section {
+    background: var(--light-bg);
+}
+
 .about_descript h2 {
-  font-size: 2.5rem;
-  color: var(--midnight);
+    font-size: 2.5rem;
+    color: var(--midnight);
+    margin-bottom: 20px;
 }
 
 .questions_card {
-  background: #ffffff !important; 
-  border-radius: 20px; 
-  border-top: 5px solid var(--gold);
-  padding: 60px;
-  max-width: 900px;
-  margin: 0 auto;
+    background: #ffffff !important; 
+    border-radius: 20px; 
+    border-top: 6px solid var(--gold);
+    padding: 60px;
+    max-width: 900px;
+    margin: 0 auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
 }
 
 /* ==========================================================================
-   4. RESPONSIVE MEDIA QUERIES (Page Content)
+   4. ANIMATIONS & RESPONSIVE
    ========================================================================== */
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
 @media (max-width: 992px) {
     .home_cont h1 { font-size: 3rem; }
-    .pro_box_cont { grid-template-columns: 1fr 1fr; padding: 20px; }
-    .questions_card { padding: 30px; margin: 0 20px; }
+    .questions_card { padding: 40px 20px; }
 }
 
 @media (max-width: 768px) {
-    .home_cont { height: 50vh; }
+    .home_cont { height: 60vh; }
     .home_cont h1 { font-size: 2.2rem; }
-    .pro_box_cont { grid-template-columns: 1fr; padding: 15px; }
-    .cart_summary_card { position: static; margin-top: 20px; }
+    .pro_box_cont { grid-template-columns: 1fr; }
 }

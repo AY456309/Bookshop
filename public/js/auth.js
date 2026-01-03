@@ -23,7 +23,6 @@ if (document.getElementById('loginForm')) {
                 localStorage.setItem('userName', result.user.name);
                 localStorage.setItem('userRole', result.user.role);
 
-                updateNav(); 
                 alert(`Welcome back, ${result.user.name}!`);
                 window.location.href = 'index.html';
             } else {
@@ -46,12 +45,11 @@ if (registerForm) {
         const email = document.getElementById('regEmail').value;
         const password = document.getElementById('regPass').value;
 
-        // /^[a-zA-Z0-9]+$/ means "Only allow a-z, A-Z, and 0-9"
         const alphanumericPattern = /^[a-zA-Z0-9]+$/;
         
         if (!alphanumericPattern.test(password)) {
-            alert("Error: Please use only letters and numbers in your password (no special characters like $, @, #).");
-            return; // Stops the function here so it doesn't send data to the server
+            alert("Error: Please use only letters and numbers in your password (no special characters).");
+            return; 
         }
 
         const userData = { name, email, password };
@@ -72,7 +70,7 @@ if (registerForm) {
                 window.location.href = 'login.html';
             } else {
                 const errorData = await response.json();
-                alert("Registration failed: " + (errorData.error || "Unknown error"));
+                alert("Registration failed: " + (errorData.error || "Email might already be taken"));
                 submitBtn.disabled = false;
                 submitBtn.innerText = "Register Now";
             }
@@ -121,4 +119,59 @@ function updateNav() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', updateNav);
+// 4. SHOP DISPLAY LOGIC
+async function displayBooks() {
+    const container = document.querySelector('.pro_box_cont');
+    if (!container) return;
+
+    try {
+        const response = await fetch('/api/products');
+        const books = await response.json();
+
+        container.innerHTML = books.map(book => {
+            // Check if image is a link or local file
+            const imgSrc = book.image.startsWith('http') ? book.image : `images/${book.image}`;
+            
+            return `
+            <div class="pro_box shadow-sm p-3 rounded">
+                <p class="badge bg-dark text-warning">AED ${Number(book.price).toFixed(2)}</p>
+                <img src="${imgSrc}" alt="${book.title}" class="img-fluid mb-3 rounded" style="height: 250px; object-fit: cover;">
+                <h3 class="fs-5">${book.title}</h3>
+                <div class="d-flex align-items-center justify-content-center gap-2 mb-3">
+                    <label class="small">Qty:</label>
+                    <input type="number" id="qty-${book._id}" min="1" value="1" class="form-control form-control-sm w-25 text-center">
+                </div>
+                <button class="product_btn w-100" onclick="addToCart('${book._id}', '${book.title}', ${book.price}, '${book.image}')">
+                    <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                </button>
+            </div>
+        `}).join('');
+
+    } catch (error) {
+        container.innerHTML = '<p class="text-danger">Failed to load books. Please check server connection.</p>';
+    }
+}
+
+// 5. ADD TO CART LOGIC
+function addToCart(id, title, price, image) {
+    const qtyInput = document.getElementById(`qty-${id}`);
+    const quantity = parseInt(qtyInput.value) || 1;
+
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const existingItem = cart.find(item => item.title === title);
+
+    if (existingItem) {
+        existingItem.quantity += quantity;
+    } else {
+        cart.push({ title, price, image, quantity });
+    }
+    
+    localStorage.setItem('cart', JSON.stringify(cart));
+    alert(`${quantity} copies of "${title}" added to cart!`);
+}
+
+// INITIALIZE EVERYTHING
+document.addEventListener('DOMContentLoaded', () => {
+    updateNav();
+    displayBooks();
+});

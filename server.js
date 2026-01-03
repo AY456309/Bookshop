@@ -9,7 +9,6 @@ const app = express();
 
 // 1. MIDDLEWARE
 app.use(express.json()); 
-// This line ensures Vercel serves your static assets (CSS/JS/Images) correctly
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
@@ -18,28 +17,32 @@ app.use(session({
     saveUninitialized: false,
     cookie: { 
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+        maxAge: 24 * 60 * 60 * 1000 
     } 
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-// 2. DATABASE CONNECTION
-// We use a variable to prevent multiple connection attempts in Serverless
+// 2. DATABASE CONNECTION (Optimized for Vercel/Serverless)
 let isConnected = false;
 const connectDB = async () => {
     if (isConnected) return;
     try {
-        await mongoose.connect(process.env.MONGO_URI);
+        // We set a timeout so the app doesn't hang forever if connection fails
+        await mongoose.connect(process.env.MONGO_URI, {
+            serverSelectionTimeoutMS: 10000 
+        });
         isConnected = true;
-        console.log('✅ Connected to MongoDB Atlas...');
+        console.log('✅ Connected to MongoDB Atlas (bookreview database)');
     } catch (err) {
         console.error('❌ MongoDB Connection Error:', err.message);
+        throw err; // Re-throw to catch it in the routes
     }
 };
 
-connectDB();
+// Initial connection attempt
+connectDB().catch(err => console.error("Initial DB connection failed"));
 
 // 3. MODELS
 const productSchema = new mongoose.Schema({ title: String, price: Number, image: String });
@@ -49,8 +52,10 @@ const orderSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 
-const Product = mongoose.models.Product || mongoose.model('Product', productSchema);
-const Order = mongoose.models.Order || mongoose.model('Order', orderSchema);
+// IMPORTANT: We explicitly name the collections 'products' and 'orders' 
+// to match exactly what is in your 'bookreview' database.
+const Product = mongoose.models.Product || mongoose.model('Product', productSchema, 'products');
+const Order = mongoose.models.Order || mongoose.model('Order', orderSchema, 'orders');
 
 // 4. ROUTES
 const userRoutes = require('./routes/users');
@@ -62,10 +67,18 @@ app.use('/api/auth', authRoutes);
 // 5. PRODUCT & ORDER LOGIC
 app.get('/api/products', async (req, res) => {
     try { 
-        await connectDB(); // Ensure DB is connected for serverless
-        const books = await Product.find(); 
+        await connectDB(); 
+        const books = await Product.find({}); // Fetch all
+        console.log(`Found ${books.length} books`);
         res.json(books); 
-    } catch (err) { res.status(500).json({ error: "Failed to fetch products" }); }
+    } catch (err) { 
+        console.error("Fetch Error:", err.message);
+        res.status(500).json({ 
+            error: "Failed to fetch products", 
+            message: err.message,
+            dbStatus: isConnected ? "Connected" : "Disconnected"
+        }); 
+    }
 });
 
 app.post('/api/orders', async (req, res) => {
@@ -75,24 +88,19 @@ app.post('/api/orders', async (req, res) => {
         await newOrder.save();
         res.status(201).json({ success: true, message: "Order placed!", orderId: newOrder._id });
     } catch (err) { 
-        res.status(500).json({ success: false, error: "Order failed" }); 
+        res.status(500).json({ success: false, error: "Order failed", message: err.message }); 
     }
 });
 
 // 6. CATCH-ALL ROUTE (Express 5 & Vercel compatible)
-// We use app.use without a path string to avoid the Express 5 path-to-regexp crash
 app.use((req, res, next) => {
-    // 1. If the request is for an API but no route matched it yet
     if (req.path.startsWith('/api')) {
         return res.status(404).json({ error: "API endpoint not found" });
     }
 
-    // 2. For everything else (navigation), serve the index.html
-    // Use path.join to ensure Vercel's file system finds it
     const indexPath = path.join(__dirname, 'public', 'index.html');
     res.sendFile(indexPath, (err) => {
         if (err) {
-            // If the file is missing, don't crash, just send a 404
             res.status(404).send("Frontend file not found");
         }
     });
@@ -101,7 +109,6 @@ app.use((req, res, next) => {
 // 7. EXPORT / LISTEN
 const PORT = process.env.PORT || 3000;
 
-// Vercel needs the app exported, but local dev needs app.listen
 if (process.env.NODE_ENV !== 'production') {
     app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
 }

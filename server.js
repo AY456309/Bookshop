@@ -78,6 +78,25 @@ app.get('/api/products', async (req, res) => {
     }
 });
 
+// Get All Orders (ADMIN)
+app.get('/api/admin/orders', async (req, res) => {
+    try {
+        await connectDB();
+        const orders = await Order.find({}).sort({ createdAt: -1 }).limit(10);
+        res.json(orders || []);
+    } catch (err) { res.status(500).json({ error: "Failed to fetch all orders" }); }
+});
+
+// Get Recent Users (ADMIN)
+app.get('/api/admin/recent-users', async (req, res) => {
+    try {
+        await connectDB();
+        const UserModel = mongoose.models.User || require('./models/user');
+        const users = await UserModel.find({}, 'name email role').sort({ _id: -1 }).limit(5);
+        res.json(users || []);
+    } catch (err) { res.status(500).json({ error: "Failed to fetch users" }); }
+});
+
 // GET USER ORDERS (Matches orders.js)
 app.get('/api/orders/:email', async (req, res) => {
     try {
@@ -125,31 +144,6 @@ app.delete('/api/products/:id', async (req, res) => {
     } catch (err) { res.status(500).json({ error: "Delete failed" }); }
 });
 
-// ADMIN: Get all orders from all users
-app.get('/api/admin/orders', async (req, res) => {
-    try {
-        await connectDB();
-        // Finds ALL orders, newest first, limits to last 10 for dashboard performance
-        const orders = await Order.find({}).sort({ createdAt: -1 }).limit(10);
-        res.json(orders);
-    } catch (err) {
-        res.status(500).json({ error: "Failed to fetch all orders" });
-    }
-});
-
-// ADMIN: Get recent users (Add this to server.js)
-app.get('/api/admin/recent-users', async (req, res) => {
-    try {
-        await connectDB();
-        // This assumes you have a User model. 
-        // If your users are in a different collection, change 'User' accordingly.
-        const User = mongoose.model('User'); 
-        const users = await User.find({}).sort({ createdAt: -1 }).limit(5);
-        res.json(users);
-    } catch (err) {
-        res.status(500).json({ error: "Failed to fetch users" });
-    }
-});
 
 // 7. CATCH-ALL ROUTE (KEEPING YOUR WORKING LOGIC)
 app.use((req, res, next) => {

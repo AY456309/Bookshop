@@ -79,11 +79,13 @@ app.post('/api/orders', async (req, res) => {
     }
 });
 
-// 6. CATCH-ALL ROUTE (RESTORED VERSION)
-app.get('*', (req, res, next) => {
+// 6. CATCH-ALL ROUTE (Fixed for Express 5 compatibility)
+app.get('/*', (req, res, next) => {
     // Prevent catching /api routes
     if (req.path.startsWith('/api')) return next();
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    
+    // Use path.resolve to ensure Vercel finds the file correctly
+    res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
 });
 
 // 7. EXPORT / LISTEN

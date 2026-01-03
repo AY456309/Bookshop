@@ -1,0 +1,72 @@
+# Chapters & Co. - Full Stack Bookshop
+
+A modern, full-stack e-commerce platform for books built with **Node.js, Express, and MongoDB**. This project features a customer-facing shop and a secure Admin Dashboard for inventory management.
+
+## 🚀 Live Demo
+bookshop-flame.vercel.app
+
+## ✨ Features
+
+### Customer Features
+- **Browse Books:** Real-time product fetching from MongoDB.
+- **User Authentication:** Secure Register and Login system.
+- **Shopping Cart:** Add/remove items with persistent storage (LocalStorage).
+- **Orders:** Place orders and view order history.
+
+### Admin Features
+- **Admin Dashboard:** Private access for authorized users.
+- **Inventory Management:** Add new books or delete existing ones.
+- **User Insights:** View the most recently registered users.
+
+## 🛠️ Tech Stack
+- **Frontend:** HTML5, CSS3, JavaScript (Vanilla), Bootstrap 5.
+- **Backend:** Node.js, Express.js.
+- **Database:** MongoDB Atlas (Mongoose).
+- **Deployment:** Vercel.
+
+## 📦 Project Structure
+```text
+/
+├── api/                # Vercel serverless functions (if applicable)
+├── models/             # Mongoose Schemas (User, Product, Order)
+├── public/             # Frontend files
+│   ├── admin/          # Admin Dashboard HTML
+│   ├── css/            # Stylesheets
+│   ├── js/             # Frontend Logic (auth, main, cart, admin)
+│   └── index.html      # Main Entry Point
+├── routes/             # API Endpoints (users, products, orders)
+├── server.js           # Main Express Server
+└── vercel.json         # Deployment configuration
+
+
+## Setup Instructions
+Follow these steps to set up the project locally:
+
+1. intall all packages
+ 
+- Install Node.js
+- A MongoDB Atlas account
+
+2. Clone the Repository
+
+git clone https://github.com/DC-BSU-RAK/assignment-100-tomorrow-s-web-AY456309.git
+
+cd bookshop
+
+3. Install Dependencies
+npm install
+
+4. Environment Variables
+Create a .env file in the root directory and add the following:
+
+MONGO_URI=your_mongodb_atlas_connection_string
+SESSION_SECRET=your_secret_key
+PORT=3000 
+
+Note: When deploying to Vercel, add these keys under Settings > Environment Variables.
+
+## 5. Run the App
+
+npm start
+
+Open http://localhost:3000 in your browser.

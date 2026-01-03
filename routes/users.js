@@ -1,49 +1,72 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/user'); // Ensure models/user.js uses the 'mongoose.models.User || ...' logic
+const User = require('../models/user'); 
 
-// 1. POST: Register User
-// Note: If using Google Login, this is for manual email/password registration
+// ---------------------------------------------------------
+// 1. REGISTER USER
+// ---------------------------------------------------------
 router.post('/register', async (req, res) => {
     try {
-        const newUser = new User(req.body); 
+        // Create new user with data from the registration form
+        const newUser = new User({
+            name: req.body.name,
+            email: req.body.email,
+            password: req.body.password, // Plain text for now
+            role: 'user' // Default role
+        });
+
         await newUser.save();
-        res.status(201).json({ message: "User registered successfully!" });
+        res.status(201).json({ success: true, message: "User registered successfully!" });
     } catch (err) {
-        // Usually fails if the email already exists in the database
-        res.status(400).json({ error: "Email already exists" });
+        console.error("Registration Error:", err.message);
+        // MongoDB unique constraint error usually means email is taken
+        res.status(400).json({ success: false, error: "Email already exists or invalid data" });
     }
 });
 
-// 2. POST: Login User
+// ---------------------------------------------------------
+// 2. LOGIN USER
+// ---------------------------------------------------------
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
-        // Finding user by matching both email and plain-text password
+        // Check if user exists with matching email AND password
         const user = await User.findOne({ email, password });
+
         if (user) {
+            // Send back only the necessary data for the frontend localStorage
             res.json({ 
                 success: true, 
-                user: { name: user.name, email: user.email, role: user.role } 
+                user: { 
+                    name: user.name, 
+                    email: user.email, 
+                    role: user.role 
+                } 
             });
         } else {
-            res.status(401).json({ success: false, message: "Invalid credentials" });
+            res.status(401).json({ success: false, message: "Invalid email or password" });
         }
     } catch (err) { 
-        res.status(500).json({ error: "Server error" }); 
+        console.error("Login Error:", err.message);
+        res.status(500).json({ success: false, error: "Server error during login" }); 
     }
 });
 
-// 3. GET: Get the 3 most recent users for Admin Dashboard
+// ---------------------------------------------------------
+// 3. ADMIN: GET RECENT USERS
+// ---------------------------------------------------------
+// This route is called by your admin.js frontend
 router.get('/admin/recent-users', async (req, res) => {
     try {
-        // Fetches only name, email, and role; excludes password for security
+        // Fetch last 3 users, only selecting fields needed for the dashboard
         const recentUsers = await User.find({}, 'name email role')
-            .sort({ _id: -1 }) // Sort by newest first
+            .sort({ _id: -1 }) 
             .limit(3);
+            
         res.json(recentUsers);
     } catch (err) {
-        res.status(500).json({ error: "Failed to fetch users" });
+        console.error("Admin Users Fetch Error:", err.message);
+        res.status(500).json({ error: "Failed to fetch recent users" });
     }
 });
 

@@ -53,4 +53,10 @@ function addToCart(id, title, price, image) {
     alert(`${quantity} copy/copies of "${title}" added to cart!`);
 }
 
+// Function to handle Google Login
+function loginWithGoogle() {
+    // This sends the user to your backend auth route on Vercel
+    window.location.href = '/api/auth/google';
+}
+
 displayBooks();

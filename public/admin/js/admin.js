@@ -14,37 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     displayRecentUsers();
 });
 
-// 2. Fetch and display recent users
-async function displayRecentUsers() {
-    const userList = document.getElementById('recentUsersList');
-    
-    try {
-        const response = await fetch('/api/admin/recent-users');
-        const users = await response.json();
-
-        if (!users || users.length === 0) {
-            userList.innerHTML = '<p class="text-muted text-center py-3">No recent users found.</p>';
-            return;
-        }
-
-        userList.innerHTML = users.map(user => `
-            <div class="d-flex align-items-center mb-3 p-3 bg-light rounded-3 border-start border-4 border-dark">
-                <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px;">
-                    <i class="fas fa-user-circle" style="color: #d4af37;"></i>
-                </div>
-                <div class="flex-grow-1">
-                    <h6 class="mb-0 fw-bold">${user.name}</h6>
-                    <small class="text-muted">${user.email}</small>
-                </div>
-                <span class="badge rounded-pill bg-dark text-warning px-3">${user.role.toUpperCase()}</span>
-            </div>
-        `).join('');
-    } catch (error) {
-        userList.innerHTML = '<p class="text-danger text-center">Error connecting to Atlas.</p>';
-    }
-}
-
-// 3. Fetch and display inventory
+// 2. FETCH AND DISPLAY INVENTORY
 async function loadAdminProducts() {
     const list = document.getElementById('adminProductList');
     if(!list) return;
@@ -52,6 +22,11 @@ async function loadAdminProducts() {
     try {
         const response = await fetch('/api/products');
         const products = await response.json();
+
+        if (products.length === 0) {
+            list.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Inventory is empty.</td></tr>';
+            return;
+        }
 
         list.innerHTML = products.map(book => {
             // Logic to handle local vs web images
@@ -78,20 +53,22 @@ async function loadAdminProducts() {
     }
 }
 
-// 4. Add new product to MongoDB
+// 3. ADD NEW PRODUCT TO MONGODB
 const addBookForm = document.getElementById('addBookForm');
 if (addBookForm) {
     addBookForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const submitBtn = addBookForm.querySelector('button');
+        const originalText = submitBtn.innerText;
+        
         submitBtn.disabled = true;
         submitBtn.innerText = "Adding...";
 
         const newBook = {
             title: document.getElementById('title').value,
             price: parseFloat(document.getElementById('price').value),
-            image: document.getElementById('image').value
+            image: document.getElementById('image').value // e.g., "game_of_throne.jpg"
         };
 
         try {
@@ -104,29 +81,64 @@ if (addBookForm) {
             if (response.ok) {
                 alert("Inventory Updated Successfully!");
                 addBookForm.reset();
-                loadAdminProducts(); 
+                loadAdminProducts(); // Refresh the table
             } else {
-                alert("Database Error: Could not save book.");
+                const errorData = await response.json();
+                alert("Database Error: " + (errorData.error || "Could not save book."));
             }
         } catch (error) {
+            console.error("Add Product Error:", error);
             alert("Network Error: Check server connection.");
         } finally {
             submitBtn.disabled = false;
-            submitBtn.innerText = "Add Product";
+            submitBtn.innerText = originalText;
         }
     });
 }
 
-// 5. Delete product from MongoDB
+// 4. DELETE PRODUCT FROM MONGODB
 async function deleteProduct(id) {
     if (confirm("Are you sure? This will permanently remove the item from the shop.")) {
         try {
             const response = await fetch(`/api/products/${id}`, { method: 'DELETE' });
             if (response.ok) {
-                loadAdminProducts(); 
+                loadAdminProducts(); // Refresh table
+            } else {
+                alert("Failed to delete product.");
             }
         } catch (error) {
             alert("Delete request failed.");
         }
+    }
+}
+
+// 5. FETCH AND DISPLAY RECENT USERS
+async function displayRecentUsers() {
+    const userList = document.getElementById('recentUsersList');
+    if(!userList) return;
+    
+    try {
+        const response = await fetch('/api/admin/recent-users');
+        const users = await response.json();
+
+        if (!users || users.length === 0) {
+            userList.innerHTML = '<p class="text-muted text-center py-3">No recent users found.</p>';
+            return;
+        }
+
+        userList.innerHTML = users.map(user => `
+            <div class="d-flex align-items-center mb-3 p-3 bg-white rounded-3 border shadow-sm">
+                <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                    <i class="fas fa-user text-warning"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="mb-0 fw-bold">${user.name}</h6>
+                    <small class="text-muted">${user.email}</small>
+                </div>
+                <span class="badge bg-light text-dark border">${user.role || 'user'}</span>
+            </div>
+        `).join('');
+    } catch (error) {
+        userList.innerHTML = '<p class="text-danger text-center">Error connecting to database.</p>';
     }
 }

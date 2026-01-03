@@ -65,7 +65,7 @@ const authRoutes = require('./routes/auth');
 app.use('/api', userRoutes);      
 app.use('/api/auth', authRoutes); 
 
-// 5. PRODUCT & ORDER LOGIC
+// 5. API LOGIC (Products & Orders)
 
 // GET PRODUCTS
 app.get('/api/products', async (req, res) => {
@@ -83,7 +83,6 @@ app.get('/api/orders/:email', async (req, res) => {
     try {
         await connectDB();
         const userEmail = req.params.email;
-        // Search the "email" field in the database
         const orders = await Order.find({ email: userEmail }).sort({ createdAt: -1 });
         res.status(200).json(orders);
     } catch (error) {
@@ -103,7 +102,32 @@ app.post('/api/orders', async (req, res) => {
     }
 });
 
-// 6. CATCH-ALL ROUTE (KEEPING YOUR WORKING LOGIC)
+// ADMIN: Add product (This is what was missing for your Game of Thrones add)
+app.post('/api/products', async (req, res) => {
+    try {
+        await connectDB();
+        const newProduct = new Product({
+            title: req.body.title,
+            price: Number(req.body.price),
+            image: req.body.image
+        });
+        await newProduct.save();
+        res.status(201).json({ success: true });
+    } catch (err) { res.status(500).json({ error: "Failed to add product" }); }
+});
+
+// ADMIN: Delete product
+app.delete('/api/products/:id', async (req, res) => {
+    try {
+        await connectDB();
+        await Product.findByIdAndDelete(req.params.id);
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ error: "Delete failed" }); }
+});
+
+
+
+// 7. CATCH-ALL ROUTE (KEEPING YOUR WORKING LOGIC)
 app.use((req, res, next) => {
     if (req.path.startsWith('/api')) {
         return res.status(404).json({ error: "API endpoint not found" });

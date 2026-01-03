@@ -1,4 +1,4 @@
-console.log("Admin JS loaded!"); 
+console.log("✅ Admin Dashboard Initialized");
 
 // 1. SECURITY & INITIALIZATION
 document.addEventListener('DOMContentLoaded', () => {

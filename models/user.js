@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+// Define the Schema
 const userSchema = new mongoose.Schema({
     name: { 
         type: String, 
@@ -11,16 +12,19 @@ const userSchema = new mongoose.Schema({
         unique: true 
     },
     password: { 
-        type: String 
-    }, 
-    googleId: { 
-        type: String 
+        type: String, 
+        required: true 
     },
     role: { 
         type: String, 
         default: 'user' 
-    } 
-}, { timestamps: true }); 
+    },
+    googleId: { 
+        type: String 
+    }
+}, { timestamps: true });
 
-// UPDATE THIS LINE BELOW:
-module.exports = mongoose.models.User || mongoose.model('User', userSchema);
+// CRITICAL: This pattern prevents "OverwriteModelError" on Vercel
+const User = mongoose.models.User || mongoose.model('User', userSchema);
+
+module.exports = User;

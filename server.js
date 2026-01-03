@@ -79,13 +79,23 @@ app.post('/api/orders', async (req, res) => {
     }
 });
 
-app.get('/:any*', (req, res, next) => {
-    // 1. If it's an API request that hasn't been caught yet, it's a 404
+// 6. CATCH-ALL ROUTE (Express 5 & Vercel compatible)
+// We use app.use without a path string to avoid the Express 5 path-to-regexp crash
+app.use((req, res, next) => {
+    // 1. If the request is for an API but no route matched it yet
     if (req.path.startsWith('/api')) {
-        return res.status(404).json({ error: "API Endpoint not found" });
+        return res.status(404).json({ error: "API endpoint not found" });
     }
-    // 2. For all other page requests, serve the index.html
-    res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
+
+    // 2. For everything else (navigation), serve the index.html
+    // Use path.join to ensure Vercel's file system finds it
+    const indexPath = path.join(__dirname, 'public', 'index.html');
+    res.sendFile(indexPath, (err) => {
+        if (err) {
+            // If the file is missing, don't crash, just send a 404
+            res.status(404).send("Frontend file not found");
+        }
+    });
 });
 
 // 7. EXPORT / LISTEN

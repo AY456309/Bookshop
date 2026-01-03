@@ -25,23 +25,25 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // 2. DATABASE CONNECTION (Optimized for Vercel/Serverless)
-let isConnected = false;
 const connectDB = async () => {
-    if (isConnected) return;
+    // Check if we already have a connection (1 = connected, 2 = connecting)
+    if (mongoose.connection.readyState >= 1) return;
+
     try {
-        // We set a timeout so the app doesn't hang forever if connection fails
+        console.log("🔄 Connecting to MongoDB...");
         await mongoose.connect(process.env.MONGO_URI, {
-            serverSelectionTimeoutMS: 10000 
+            dbName: 'bookreview', // Explicitly point to your database
+            serverSelectionTimeoutMS: 10000, 
+            bufferCommands: false // Stop buffering if connection is lost
         });
-        isConnected = true;
         console.log('✅ Connected to MongoDB Atlas (bookreview database)');
     } catch (err) {
         console.error('❌ MongoDB Connection Error:', err.message);
-        throw err; // Re-throw to catch it in the routes
+        throw err;
     }
 };
 
-// Initial connection attempt
+// Initial connection
 connectDB().catch(err => console.error("Initial DB connection failed"));
 
 // 3. MODELS
@@ -52,8 +54,7 @@ const orderSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 
-// IMPORTANT: We explicitly name the collections 'products' and 'orders' 
-// to match exactly what is in your 'bookreview' database.
+// Explicitly naming the collections 'products' and 'orders'
 const Product = mongoose.models.Product || mongoose.model('Product', productSchema, 'products');
 const Order = mongoose.models.Order || mongoose.model('Order', orderSchema, 'orders');
 
@@ -68,15 +69,15 @@ app.use('/api/auth', authRoutes);
 app.get('/api/products', async (req, res) => {
     try { 
         await connectDB(); 
-        const books = await Product.find({}); // Fetch all
-        console.log(`Found ${books.length} books`);
+        const books = await Product.find({}).lean(); // .lean() makes queries faster
+        console.log(`Found ${books.length} books in bookreview`);
         res.json(books); 
     } catch (err) { 
         console.error("Fetch Error:", err.message);
         res.status(500).json({ 
             error: "Failed to fetch products", 
             message: err.message,
-            dbStatus: isConnected ? "Connected" : "Disconnected"
+            dbState: mongoose.connection.readyState
         }); 
     }
 });

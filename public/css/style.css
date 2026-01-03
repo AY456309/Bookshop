@@ -127,13 +127,89 @@ body {
 }
 
 /* --- Footer --- */
-.footer_main { background-color: var(--midnight); color: white; padding: 60px 0 20px; }
-.footer_copy { color: #555; font-size: 0.8rem; margin-top: 20px; }
-.footer_hr { border-color: #333; margin: 30px 0; }
+.footer_main { 
+    background-color: var(--midnight); 
+    color: white; 
+    padding: 60px 0 20px; 
+}
 
-.footer_links_list { list-style: none; padding: 0; }
-.footer_links_list li a { color: #bbb; text-decoration: none; font-size: 0.9rem; line-height: 2; transition: 0.3s; }
-.footer_links_list li a:hover { color: var(--gold); padding-left: 5px; }
+.footer_title { 
+    color: var(--gold); 
+    text-transform: uppercase;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 25px;
+    letter-spacing: 1.2px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.footer_title::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 40px;
+    background-color: var(--gold);
+}
+
+.footer_text {
+    color: #bbb;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.footer_links_list { 
+    list-style: none; 
+    padding: 0; 
+}
+
+.footer_links_list li a { 
+    color: #bbb; 
+    text-decoration: none; 
+    font-size: 0.9rem; 
+    line-height: 2.5; 
+    transition: 0.3s ease; 
+}
+
+.footer_links_list li a:hover { 
+    color: var(--gold); 
+    padding-left: 10px; 
+}
+
+.footer_social_link {
+    color: #bbb;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.footer_social_link i {
+    color: var(--gold);
+    font-size: 1rem;
+    width: 20px;
+}
+
+.footer_social_link:hover {
+    color: var(--gold);
+    transform: translateX(10px);
+}
+
+.footer_hr { 
+    border-color: rgba(255, 255, 255, 0.1); 
+    margin: 40px 0 20px; 
+}
+
+.footer_copy { 
+    color: #666; 
+    font-size: 0.8rem;
+    text-align: center; /* Added for better alignment */
+}
 
 /* --- GLOBAL RESPONSIVE NAV --- */
 @media (max-width: 992px) {

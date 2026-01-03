@@ -35,7 +35,7 @@ if (document.getElementById('loginForm')) {
     });
 }
 
-// 2. REGISTER LOGIC (With Alphanumeric Check)
+// 2. REGISTER LOGIC
 const registerForm = document.getElementById('registerForm');
 if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
@@ -46,9 +46,8 @@ if (registerForm) {
         const password = document.getElementById('regPass').value;
 
         const alphanumericPattern = /^[a-zA-Z0-9]+$/;
-        
         if (!alphanumericPattern.test(password)) {
-            alert("Error: Please use only letters and numbers in your password (no special characters).");
+            alert("Error: Please use only letters and numbers in your password.");
             return; 
         }
 
@@ -70,12 +69,12 @@ if (registerForm) {
                 window.location.href = 'login.html';
             } else {
                 const errorData = await response.json();
-                alert("Registration failed: " + (errorData.error || "Email might already be taken"));
+                alert("Registration failed: " + (errorData.error || "Email already taken"));
                 submitBtn.disabled = false;
                 submitBtn.innerText = "Register Now";
             }
         } catch (error) {
-            alert("Could not connect to server. Check your MongoDB Atlas connection.");
+            alert("Could not connect to server.");
             submitBtn.disabled = false;
             submitBtn.innerText = "Register Now";
         }
@@ -105,16 +104,14 @@ function updateNav() {
             window.location.href = 'index.html';
         };
 
-        if (userRole === 'admin' && navLinks) {
-            if (!document.getElementById('admin_link')) {
-                const adminLink = document.createElement('a');
-                adminLink.id = 'admin_link';
-                adminLink.href = 'admin/dashboard.html';
-                adminLink.innerHTML = 'Admin Panel';
-                adminLink.style.color = '#d4af37';
-                adminLink.style.fontWeight = 'bold';
-                navLinks.appendChild(adminLink);
-            }
+        if (userRole === 'admin' && navLinks && !document.getElementById('admin_link')) {
+            const adminLink = document.createElement('a');
+            adminLink.id = 'admin_link';
+            adminLink.href = 'admin/dashboard.html';
+            adminLink.innerHTML = 'Admin Panel';
+            adminLink.style.color = '#d4af37';
+            adminLink.style.fontWeight = 'bold';
+            navLinks.appendChild(adminLink);
         }
     }
 }
@@ -129,13 +126,11 @@ async function displayBooks() {
         const books = await response.json();
 
         container.innerHTML = books.map(book => {
-            // Check if image is a link or local file
             const imgSrc = book.image.startsWith('http') ? book.image : `images/${book.image}`;
-            
             return `
             <div class="pro_box shadow-sm p-3 rounded">
                 <p class="badge bg-dark text-warning">AED ${Number(book.price).toFixed(2)}</p>
-                <img src="${imgSrc}" alt="${book.title}" class="img-fluid mb-3 rounded" style="height: 250px; object-fit: cover;">
+                <img src="${imgSrc}" alt="${book.title}" class="img-fluid mb-3 rounded" style="height: 250px; width:100%; object-fit: cover;">
                 <h3 class="fs-5">${book.title}</h3>
                 <div class="d-flex align-items-center justify-content-center gap-2 mb-3">
                     <label class="small">Qty:</label>
@@ -144,11 +139,10 @@ async function displayBooks() {
                 <button class="product_btn w-100" onclick="addToCart('${book._id}', '${book.title}', ${book.price}, '${book.image}')">
                     <i class="fas fa-cart-plus me-2"></i>Add to Cart
                 </button>
-            </div>
-        `}).join('');
-
+            </div>`;
+        }).join('');
     } catch (error) {
-        container.innerHTML = '<p class="text-danger">Failed to load books. Please check server connection.</p>';
+        container.innerHTML = '<p class="text-danger">Failed to load books.</p>';
     }
 }
 

@@ -57,7 +57,6 @@
   box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
-/* Floating Gold Price Badge */
 .pro_box .badge {
   position: absolute;
   top: 15px;
@@ -88,7 +87,7 @@
   color: var(--midnight);
   margin: 10px 0 15px;
   font-weight: 600;
-  height: 2.4em; /* Keeps titles aligned */
+  height: 2.4em; 
   overflow: hidden;
 }
 
@@ -268,7 +267,6 @@
   top: 100px;
 }
 
-/* Button override for outline in cart */
 .btn-outline-dark {
   border: 2px solid var(--midnight);
   color: var(--midnight);
@@ -306,9 +304,89 @@
   transform: translateX(-50%);
 }
 
-/* Add this at the very end of your file */
-@media (max-width: 600px) {
+/* ==========================================================================
+   9. RESPONSIVE MEDIA QUERIES
+   ========================================================================== */
+
+/* --- TABLETS & SMALL LAPTOPS (max-width: 992px) --- */
+@media (max-width: 992px) {
+    .home_cont h1 {
+        font-size: 3rem;
+    }
+
     .pro_box_cont {
-        grid-template-columns: 1fr; /* 1 column on mobile */
+        grid-template-columns: 1fr 1fr; /* Stay 2 columns */
+        padding: 20px;
+    }
+
+    .about_descript {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    .questions_card {
+        padding: 30px;
+        margin: 0 20px;
+    }
+}
+
+/* --- MOBILE PHONES (max-width: 768px) --- */
+@media (max-width: 768px) {
+    /* Hero Section */
+    .home_cont {
+        height: 50vh;
+    }
+    .home_cont h1 {
+        font-size: 2.2rem;
+        letter-spacing: 1px;
+    }
+    .home_cont p {
+        font-size: 1rem;
+        padding: 0 15px;
+    }
+
+    /* Product Grid - Switch to 1 Column */
+    .pro_box_cont {
+        grid-template-columns: 1fr;
+        padding: 15px;
+        gap: 15px;
+    }
+
+    /* About & Questions */
+    .section_title {
+        font-size: 2rem;
+    }
+    .about_descript h2, .questions_card h2 {
+        font-size: 1.8rem;
+    }
+
+    /* Cart Summary - Stop sticking on mobile */
+    .cart_summary_card {
+        position: static;
+        margin-top: 20px;
+    }
+    
+    /* Orders Grid */
+    .orders_grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* --- SMALL MOBILE (max-width: 480px) --- */
+@media (max-width: 480px) {
+    .header_1 .user_flex {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .navbar_links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .navbar_links a {
+        margin: 5px;
+        font-size: 0.75rem;
     }
 }

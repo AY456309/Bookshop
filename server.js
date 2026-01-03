@@ -1,10 +1,16 @@
 const path = require('path');
 require('dotenv').config(); 
-
+const adminRoutes = require('./routes/admin');
 const express = require('express');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const session = require('express-session');
+
+// Import Routers
+const adminRoutes = require('./routes/admin');
+const userRoutes = require('./routes/users');
+const authRoutes = require('./routes/auth');
+
 const app = express();
 
 // 1. MIDDLEWARE
@@ -59,11 +65,10 @@ const Product = mongoose.models.Product || mongoose.model('Product', productSche
 const Order = mongoose.models.Order || mongoose.model('Order', orderSchema, 'orders');
 
 // 4. ROUTES (Imported)
-const userRoutes = require('./routes/users');
-const authRoutes = require('./routes/auth');
 
 app.use('/api', userRoutes);      
-app.use('/api/auth', authRoutes); 
+app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes); 
 
 // 5. API LOGIC (Products & Orders)
 
@@ -76,25 +81,6 @@ app.get('/api/products', async (req, res) => {
     } catch (err) { 
         res.status(500).json({ error: "Failed to fetch products" }); 
     }
-});
-
-// Get All Orders (ADMIN)
-app.get('/api/admin/orders', async (req, res) => {
-    try {
-        await connectDB();
-        const orders = await Order.find({}).sort({ createdAt: -1 }).limit(10);
-        res.json(orders || []);
-    } catch (err) { res.status(500).json({ error: "Failed to fetch all orders" }); }
-});
-
-// Get Recent Users (ADMIN)
-app.get('/api/admin/recent-users', async (req, res) => {
-    try {
-        await connectDB();
-        const UserModel = mongoose.models.User || require('./models/user');
-        const users = await UserModel.find({}, 'name email role').sort({ _id: -1 }).limit(5);
-        res.json(users || []);
-    } catch (err) { res.status(500).json({ error: "Failed to fetch users" }); }
 });
 
 // GET USER ORDERS (Matches orders.js)
@@ -119,29 +105,6 @@ app.post('/api/orders', async (req, res) => {
     } catch (err) { 
         res.status(500).json({ success: false, error: err.message }); 
     }
-});
-
-// ADMIN: Add product (This is what was missing for your Game of Thrones add)
-app.post('/api/products', async (req, res) => {
-    try {
-        await connectDB();
-        const newProduct = new Product({
-            title: req.body.title,
-            price: Number(req.body.price),
-            image: req.body.image
-        });
-        await newProduct.save();
-        res.status(201).json({ success: true });
-    } catch (err) { res.status(500).json({ error: "Failed to add product" }); }
-});
-
-// ADMIN: Delete product
-app.delete('/api/products/:id', async (req, res) => {
-    try {
-        await connectDB();
-        await Product.findByIdAndDelete(req.params.id);
-        res.json({ success: true });
-    } catch (err) { res.status(500).json({ error: "Delete failed" }); }
 });
 
 

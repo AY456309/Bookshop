@@ -1,5 +1,4 @@
-console.log("Admin JS loaded!"); // Add this at line 1
-alert("Admin JS is working!");   // Add this to see a popup immediately
+console.log("Admin JS loaded!"); 
 
 // 1. SECURITY & INITIALIZATION
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,9 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Load Dashboard Data
-    loadAdminProducts();
-    displayRecentUsers();
-    loadAdminOrders();
+    loadAdminProducts();    // Points to /api/products (public list)
+    displayRecentUsers();   // Points to /api/admin/recent-users
+    loadAdminOrders();      // Points to /api/admin/orders
 });
 
 // 2. FETCH AND DISPLAY INVENTORY
@@ -24,6 +23,7 @@ async function loadAdminProducts() {
     if(!list) return;
 
     try {
+        // This is the public route to get all products
         const response = await fetch('/api/products');
         const products = await response.json();
 
@@ -33,7 +33,6 @@ async function loadAdminProducts() {
         }
 
         list.innerHTML = products.map(book => {
-            // Logic to handle local vs web images
             const imgSrc = book.image.startsWith('http') ? book.image : `../images/${book.image}`;
             
             return `
@@ -57,7 +56,7 @@ async function loadAdminProducts() {
     }
 }
 
-// 3. ADD NEW PRODUCT TO MONGODB
+// 3. ADD NEW PRODUCT
 const addBookForm = document.getElementById('addBookForm');
 if (addBookForm) {
     addBookForm.addEventListener('submit', async (e) => {
@@ -72,11 +71,12 @@ if (addBookForm) {
         const newBook = {
             title: document.getElementById('title').value,
             price: parseFloat(document.getElementById('price').value),
-            image: document.getElementById('image').value // e.g., "game_of_throne.jpg"
+            image: document.getElementById('image').value 
         };
 
         try {
-            const response = await fetch('/api/products', {
+            // UPDATED URL: Now pointing to the admin-specific route
+            const response = await fetch('/api/admin/products', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newBook)
@@ -85,7 +85,7 @@ if (addBookForm) {
             if (response.ok) {
                 alert("Inventory Updated Successfully!");
                 addBookForm.reset();
-                loadAdminProducts(); // Refresh the table
+                loadAdminProducts(); 
             } else {
                 const errorData = await response.json();
                 alert("Database Error: " + (errorData.error || "Could not save book."));
@@ -100,13 +100,14 @@ if (addBookForm) {
     });
 }
 
-// 4. DELETE PRODUCT FROM MONGODB
+// 4. DELETE PRODUCT
 async function deleteProduct(id) {
     if (confirm("Are you sure? This will permanently remove the item from the shop.")) {
         try {
-            const response = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+            // UPDATED URL: Now pointing to the admin-specific route
+            const response = await fetch(`/api/admin/products/${id}`, { method: 'DELETE' });
             if (response.ok) {
-                loadAdminProducts(); // Refresh table
+                loadAdminProducts(); 
             } else {
                 alert("Failed to delete product.");
             }
@@ -143,17 +144,16 @@ async function displayRecentUsers() {
             </div>
         `).join('');
     } catch (error) {
-        userList.innerHTML = '<p class="text-danger text-center">Error connecting to database.</p>';
+        userList.innerHTML = '<p class="text-danger text-center">Error connecting to users database.</p>';
     }
 }
 
-
+// 6. FETCH AND DISPLAY ALL ORDERS
 async function loadAdminOrders() {
     const orderList = document.getElementById('adminOrdersList');
     if (!orderList) return;
 
     try {
-        // We need a new route for ALL orders (not just one email)
         const response = await fetch('/api/admin/orders'); 
         const orders = await response.json();
 
@@ -168,7 +168,7 @@ async function loadAdminOrders() {
                     <h6 class="fw-bold mb-1">${order.email}</h6>
                     <span class="badge bg-warning text-dark">${order.status}</span>
                 </div>
-                <small class="text-muted">Total: AED ${order.totalPrice.toFixed(2)}</small><br>
+                <small class="text-muted">Total: AED ${Number(order.totalPrice).toFixed(2)}</small><br>
                 <small class="text-muted">Items: ${order.items.length}</small>
             </div>
         `).join('');

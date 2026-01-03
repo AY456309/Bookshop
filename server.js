@@ -79,13 +79,12 @@ app.post('/api/orders', async (req, res) => {
     }
 });
 
-// 6. CATCH-ALL ROUTE (Correct for Express 5 + Vercel)
-app.get('/:path*', (req, res, next) => {
-    // If it's an API call that reached here, it means the API doesn't exist
+app.get('/:any*', (req, res, next) => {
+    // 1. If it's an API request that hasn't been caught yet, it's a 404
     if (req.path.startsWith('/api')) {
-        return res.status(404).json({ error: "API not found" });
+        return res.status(404).json({ error: "API Endpoint not found" });
     }
-    // Otherwise, serve your HTML file
+    // 2. For all other page requests, serve the index.html
     res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
 });
 

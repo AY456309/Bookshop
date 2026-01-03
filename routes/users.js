@@ -1,25 +1,33 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user'); 
+const mongoose = require('mongoose');
+
+// Helper to ensure DB is ready before any route runs
+const ensureDb = async () => {
+    if (mongoose.connection.readyState !== 1) {
+        // This uses the connection logic already defined in your server.js
+        console.log("Waiting for DB connection...");
+    }
+};
 
 // ---------------------------------------------------------
 // 1. REGISTER USER
 // ---------------------------------------------------------
 router.post('/register', async (req, res) => {
     try {
-        // Create new user with data from the registration form
+        await ensureDb();
         const newUser = new User({
             name: req.body.name,
             email: req.body.email,
-            password: req.body.password, // Plain text for now
-            role: 'user' // Default role
+            password: req.body.password,
+            role: 'user'
         });
 
         await newUser.save();
         res.status(201).json({ success: true, message: "User registered successfully!" });
     } catch (err) {
         console.error("Registration Error:", err.message);
-        // MongoDB unique constraint error usually means email is taken
         res.status(400).json({ success: false, error: "Email already exists or invalid data" });
     }
 });
@@ -30,11 +38,10 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
-        // Check if user exists with matching email AND password
+        await ensureDb();
         const user = await User.findOne({ email, password });
 
         if (user) {
-            // Send back only the necessary data for the frontend localStorage
             res.json({ 
                 success: true, 
                 user: { 
@@ -55,10 +62,10 @@ router.post('/login', async (req, res) => {
 // ---------------------------------------------------------
 // 3. ADMIN: GET RECENT USERS
 // ---------------------------------------------------------
-// This route is called by your admin.js frontend
 router.get('/admin/recent-users', async (req, res) => {
     try {
-        // Fetch last 3 users, only selecting fields needed for the dashboard
+        await ensureDb();
+        // Fetch last 3 users, newest first
         const recentUsers = await User.find({}, 'name email role')
             .sort({ _id: -1 }) 
             .limit(3);

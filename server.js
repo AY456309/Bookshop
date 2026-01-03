@@ -137,6 +137,19 @@ app.get('/api/admin/orders', async (req, res) => {
     }
 });
 
+// ADMIN: Get recent users (Add this to server.js)
+app.get('/api/admin/recent-users', async (req, res) => {
+    try {
+        await connectDB();
+        // This assumes you have a User model. 
+        // If your users are in a different collection, change 'User' accordingly.
+        const User = mongoose.model('User'); 
+        const users = await User.find({}).sort({ createdAt: -1 }).limit(5);
+        res.json(users);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch users" });
+    }
+});
 
 // 7. CATCH-ALL ROUTE (KEEPING YOUR WORKING LOGIC)
 app.use((req, res, next) => {

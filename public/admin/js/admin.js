@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load Dashboard Data
     loadAdminProducts();
     displayRecentUsers();
+    loadAdminOrders();
 });
 
 // 2. FETCH AND DISPLAY INVENTORY

@@ -125,6 +125,17 @@ app.delete('/api/products/:id', async (req, res) => {
     } catch (err) { res.status(500).json({ error: "Delete failed" }); }
 });
 
+// ADMIN: Get all orders from all users
+app.get('/api/admin/orders', async (req, res) => {
+    try {
+        await connectDB();
+        // Finds ALL orders, newest first, limits to last 10 for dashboard performance
+        const orders = await Order.find({}).sort({ createdAt: -1 }).limit(10);
+        res.json(orders);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch all orders" });
+    }
+});
 
 
 // 7. CATCH-ALL ROUTE (KEEPING YOUR WORKING LOGIC)

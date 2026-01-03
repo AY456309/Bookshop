@@ -145,3 +145,33 @@ async function displayRecentUsers() {
         userList.innerHTML = '<p class="text-danger text-center">Error connecting to database.</p>';
     }
 }
+
+
+async function loadAdminOrders() {
+    const orderList = document.getElementById('adminOrdersList');
+    if (!orderList) return;
+
+    try {
+        // We need a new route for ALL orders (not just one email)
+        const response = await fetch('/api/admin/orders'); 
+        const orders = await response.json();
+
+        if (!orders || orders.length === 0) {
+            orderList.innerHTML = '<p class="text-muted text-center py-4">No orders placed yet.</p>';
+            return;
+        }
+
+        orderList.innerHTML = orders.map(order => `
+            <div class="mb-3 p-3 bg-white rounded border shadow-sm">
+                <div class="d-flex justify-content-between">
+                    <h6 class="fw-bold mb-1">${order.email}</h6>
+                    <span class="badge bg-warning text-dark">${order.status}</span>
+                </div>
+                <small class="text-muted">Total: AED ${order.totalPrice.toFixed(2)}</small><br>
+                <small class="text-muted">Items: ${order.items.length}</small>
+            </div>
+        `).join('');
+    } catch (error) {
+        orderList.innerHTML = '<p class="text-danger text-center">Failed to load orders.</p>';
+    }
+}

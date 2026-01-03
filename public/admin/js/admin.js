@@ -1,3 +1,6 @@
+console.log("Admin JS loaded!"); // Add this at line 1
+alert("Admin JS is working!");   // Add this to see a popup immediately
+
 // 1. SECURITY & INITIALIZATION
 document.addEventListener('DOMContentLoaded', () => {
     const role = localStorage.getItem('userRole');

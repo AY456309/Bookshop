@@ -79,12 +79,13 @@ app.post('/api/orders', async (req, res) => {
     }
 });
 
-// 6. CATCH-ALL ROUTE (Fixed for Express 5 compatibility)
-app.get('/*', (req, res, next) => {
-    // Prevent catching /api routes
-    if (req.path.startsWith('/api')) return next();
-    
-    // Use path.resolve to ensure Vercel finds the file correctly
+// 6. CATCH-ALL ROUTE (Correct for Express 5 + Vercel)
+app.get('/:path*', (req, res, next) => {
+    // If it's an API call that reached here, it means the API doesn't exist
+    if (req.path.startsWith('/api')) {
+        return res.status(404).json({ error: "API not found" });
+    }
+    // Otherwise, serve your HTML file
     res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
 });
 

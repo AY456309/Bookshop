@@ -23,9 +23,7 @@ if (document.getElementById('loginForm')) {
                 localStorage.setItem('userName', result.user.name);
                 localStorage.setItem('userRole', result.user.role);
 
-                // FORCE UI UPDATE before redirecting
                 updateNav(); 
-
                 alert(`Welcome back, ${result.user.name}!`);
                 window.location.href = 'index.html';
             } else {
@@ -38,18 +36,31 @@ if (document.getElementById('loginForm')) {
     });
 }
 
-// 2. REGISTER LOGIC
+// 2. REGISTER LOGIC (With Alphanumeric Check)
 const registerForm = document.getElementById('registerForm');
 if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const userData = {
-            name: document.getElementById('regName').value,
-            email: document.getElementById('regEmail').value,
-            password: document.getElementById('regPass').value
-        };
+        
+        const name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPass').value;
+
+        // /^[a-zA-Z0-9]+$/ means "Only allow a-z, A-Z, and 0-9"
+        const alphanumericPattern = /^[a-zA-Z0-9]+$/;
+        
+        if (!alphanumericPattern.test(password)) {
+            alert("Error: Please use only letters and numbers in your password (no special characters like $, @, #).");
+            return; // Stops the function here so it doesn't send data to the server
+        }
+
+        const userData = { name, email, password };
+        const submitBtn = registerForm.querySelector('button[type="submit"]');
 
         try {
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Registering...";
+
             const response = await fetch('/api/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -62,24 +73,18 @@ if (registerForm) {
             } else {
                 const errorData = await response.json();
                 alert("Registration failed: " + (errorData.error || "Unknown error"));
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Register Now";
             }
         } catch (error) {
-            alert("Could not connect to server.");
+            alert("Could not connect to server. Check your MongoDB Atlas connection.");
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Register Now";
         }
     });
 }
 
-// 3. THE GATEKEEPER
-function checkAuthAndProceed() {
-    if (localStorage.getItem('isLoggedIn') === 'true') {
-        window.location.href = 'checkout.html';
-    } else {
-        alert("Please login to proceed to checkout!");
-        window.location.href = 'login.html';
-    }
-}
-
-// 4. UI UPDATE (The fix for the disappearing button)
+// 3. UI UPDATE (Logout and Admin Link)
 function updateNav() {
     const userBtn = document.getElementById('user_btn');
     const isLoggedIn = localStorage.getItem('isLoggedIn');
@@ -90,13 +95,11 @@ function updateNav() {
         const email = localStorage.getItem('userEmail');
         const shortName = email ? email.split('@')[0] : "User";
 
-        // This replaces the "Sign In" link with a "Logout" button
         userBtn.innerHTML = `
             <i class="fas fa-sign-out-alt" style="color: #d4af37;"></i>
             <span class="ms-1" style="font-size: 0.9rem;">Logout (${shortName})</span>
         `;
         
-        // Prevent the button from going to login.html
         userBtn.setAttribute('href', '#'); 
         userBtn.onclick = (e) => {
             e.preventDefault();
@@ -104,7 +107,6 @@ function updateNav() {
             window.location.href = 'index.html';
         };
 
-        // ADMIN LINK logic
         if (userRole === 'admin' && navLinks) {
             if (!document.getElementById('admin_link')) {
                 const adminLink = document.createElement('a');
@@ -119,5 +121,4 @@ function updateNav() {
     }
 }
 
-// Ensure the nav updates as soon as the script loads
 document.addEventListener('DOMContentLoaded', updateNav);

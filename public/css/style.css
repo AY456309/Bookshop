@@ -59,6 +59,12 @@ body {
   letter-spacing: 0.5px;
 }
 
+.navbar_links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 .navbar_links a {
   color: #bbb; text-decoration: none; margin: 0 12px; font-size: 0.85rem;
   text-transform: uppercase; letter-spacing: 1.2px; transition: 0.3s;
@@ -124,21 +130,20 @@ body {
   display: inline-block;
 }
 
-.product_btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
-  filter: brightness(1.1);
-}
-
 /* --- Footer --- */
 .footer_main { background-color: var(--midnight); color: white; border-top: 1px solid #222; }
-.footer_title { color: var(--gold); font-size: 1rem; text-transform: uppercase; margin-bottom: 25px; font-weight: 600; }
-.footer_text { color: #888; font-size: 0.9rem; line-height: 1.7; }
-.footer_links_list { list-style: none; padding: 0; }
-.footer_links_list li { margin-bottom: 12px; }
-.footer_links_list a, .footer_social_link {
-  color: #888; text-decoration: none; font-size: 0.9rem; transition: 0.3s;
-}
-.footer_links_list a:hover, .footer_social_link:hover { color: var(--gold); padding-left: 5px; }
-.footer_hr { border-color: #222; margin: 40px 0 20px; }
 .footer_copy { color: #555; font-size: 0.75rem; }
+
+/* --- GLOBAL RESPONSIVE NAV (Critical for all pages) --- */
+@media (max-width: 768px) {
+  .user_flex {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+    text-align: center;
+  }
+  .navbar_links a {
+    margin: 5px 8px;
+    font-size: 0.75rem;
+  }
+}
